@@ -1,0 +1,564 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"se",
+				"selectAll"
+			],
+			[
+				"sel",
+				"selectAll"
+			],
+			[
+				"draw",
+				"drawScore"
+			],
+			[
+				"clon",
+				"cloneD"
+			],
+			[
+				"getN",
+				"getNextNeighbor"
+			],
+			[
+				"valiP",
+				"validPs"
+			],
+			[
+				"pi",
+				"piecesSelection"
+			],
+			[
+				"get",
+				"getAbsCoords"
+			],
+			[
+				"rel",
+				"relativeD"
+			],
+			[
+				"vali",
+				"validPs"
+			],
+			[
+				"abs",
+				"absP"
+			],
+			[
+				"sele",
+				"selected"
+			],
+			[
+				"cur",
+				"currentValid"
+			],
+			[
+				"is",
+				"isValidAbsCoords"
+			],
+			[
+				"CE",
+				"CELL_WIDTH_GUTTER"
+			],
+			[
+				"ge",
+				"getNeighbors"
+			],
+			[
+				"set",
+				"setNeighbors"
+			],
+			[
+				"isV",
+				"isValid"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"HE",
+				"HOME_HEIGHT"
+			],
+			[
+				"select",
+				"selectAll"
+			],
+			[
+				"bac",
+				"background"
+			],
+			[
+				"CELL",
+				"CELL_WIDTH"
+			],
+			[
+				"OF",
+				"offsets"
+			],
+			[
+				"back",
+				"background"
+			],
+			[
+				"b",
+				"bottom"
+			],
+			[
+				"foot",
+				"footer-shortcuts"
+			],
+			[
+				"pa",
+				"padding-left"
+			],
+			[
+				"opt",
+				"option-message-bar-bottom"
+			],
+			[
+				"option",
+				"option-icon"
+			],
+			[
+				"header",
+				"header-original"
+			],
+			[
+				"opti",
+				"option-top-right"
+			],
+			[
+				"head",
+				"header-original"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "pxfe-make-flywheel",
+	"command_palette":
+	{
+		"height": 67.0,
+		"selected_items":
+		[
+			[
+				"Instal",
+				"Package Control: Install Package"
+			],
+			[
+				"Install",
+				"Package Control: Install Package"
+			],
+			[
+				"Insta",
+				"Package Control: Install Package"
+			],
+			[
+				"Package",
+				"Preferences: Browse Packages"
+			],
+			[
+				"pack",
+				"Preferences: Browse Packages"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 0.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/saralin/Google Drive/Experiments/Prototype/public/checker/checker.sublime-project",
+		"/Users/saralin/Desktop/Prototype/public/checker/checker.sublime-workspace",
+		"/Users/saralin/Documents/APX/apx-frontend-old/less/flywheel/flywheel.less",
+		"/Users/saralin/Documents/APX/apx-frontend/less/flywheel/flywheel.less",
+		"/Users/saralin/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/saralin/Documents/APX/apx-frontend/less/flywheel/font.less",
+		"/Users/saralin/Documents/APX/apx-frontend/js/flywheel/controllers/appCtrl.js",
+		"/Users/saralin/Documents/APX/apx-frontend/less/flywheel/keyframes.less",
+		"/Users/saralin/Documents/APX/apx-frontend/less/flywheel/sattelite.less",
+		"/Users/saralin/Documents/APX/apx-frontend/js/flywheel/directives/sparkline.js",
+		"/Users/saralin/Documents/APX/apx-frontend/less/flywheel/kpi.less",
+		"/Users/saralin/Documents/APX/apx-frontend/manifests/flywheel.json",
+		"/Users/saralin/Documents/APX/apx-frontend/less/lib/pure-0.3.0/grids/grids-units.css",
+		"/Users/saralin/Documents/APX/apx-frontend/less/lib/pure-0.3.0/grids/grids-core.css",
+		"/Users/saralin/Documents/APX/apx-frontend/less/lib/pure-0.3.0/grids/grids-r.css",
+		"/Users/saralin/Documents/APX/apx-frontend/manifests/ui-pure.json",
+		"/Users/saralin/Documents/APX/apx-frontend/less/px/components/font.less",
+		"/Users/saralin/Documents/APX/apx-frontend/manifests/ui-font.json",
+		"/Users/saralin/Documents/APX/apx-frontend/less/flywheel/tooltip.less",
+		"/Users/saralin/Documents/APX/apx-frontend/less/flywheel/variables.less",
+		"/Users/saralin/Documents/APX/apx-frontend/less/flywheel/chapter-metrics.less",
+		"/Users/saralin/Desktop/Prototype/public/evergreen_upgrade/css/mac-tray.css",
+		"/Users/saralin/Desktop/Prototype/public/evergreen_upgrade/css/mac-upgrade.css",
+		"/Users/saralin/Desktop/Prototype/public/evergreen_upgrade/css/mac-upgrade-no-labels.css",
+		"/Users/saralin/Desktop/Prototype/public/evergreen_upgrade/css/windows-upgrade.css",
+		"/Users/saralin/Desktop/Prototype/public/evergreen_upgrade/css/windows.css",
+		"/Users/saralin/Desktop/Prototype/public/evergreen_upgrade/css/general.css",
+		"/Users/saralin/Desktop/Prototype/public/evergreen_upgrade/css/retina.css",
+		"/Users/saralin/Desktop/Prototype/public/evergreen_upgrade/html/mac.html",
+		"/Users/saralin/Downloads/solarized/adobe-swatches-solarized/README.md",
+		"/Users/saralin/Desktop/Prototype/app.js",
+		"/Users/saralin/Dropbox (Dropbox)/Design Cabin/Web Kit/package.json",
+		"/Users/saralin/Dropbox (Dropbox)/Design Cabin/Web Kit/Gruntfile.js",
+		"/Users/saralin/Desktop/Evergreen Upgrade/html/no-labels.html",
+		"/Users/saralin/Desktop/Evergreen Upgrade/html/index.html",
+		"/Users/saralin/Desktop/Evergreen Upgrade/css/reset.css",
+		"/Users/saralin/Desktop/Evergreen Upgrade/css/retina.css",
+		"/Users/saralin/Desktop/Evergreen Upgrade/css/general.css",
+		"/Users/saralin/Desktop/Evergreen Upgrade/css/tray.css",
+		"/Users/saralin/Desktop/Evergreen Upgrade/css/upgrade.css",
+		"/Users/saralin/Desktop/Evergreen Upgrade/css/upgrade-no-labels.css",
+		"/Users/saralin/Documents/Web Kit/index.html"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"*.less",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"calculate",
+			"console.log",
+			"score",
+			"curP",
+			"getValidPositions",
+			"log",
+			"console",
+			"p.",
+			"this.pieces",
+			"getAbs",
+			"getabs",
+			"console.l",
+			"active",
+			"getNeighbor",
+			"initPieces",
+			"CELL_GUTTER",
+			"CELL_WIDTH",
+			"Board.CELL_WIDTH",
+			"CELL_WIDTH",
+			"class",
+			"ths",
+			"h2",
+			"h4",
+			"1.1",
+			"25",
+			"@2x",
+			"hinge",
+			"translateY(40px);",
+			"translateY(20px);",
+			"kpi-metric\"",
+			"hinge",
+			"kpi-metric",
+			"animated fadeInUp",
+			"style=\"-webkit-animation-delay:",
+			"-webkit-animation",
+			"faceInUp",
+			"smooth",
+			"bounceIn",
+			"keyframe",
+			"webkit-keyframes",
+			"}",
+			"hover-highlights",
+			"background-image",
+			"pure-u-1-4",
+			"							<h4>{{dfbAcvModel.getSelectedKpiValue()}}</h4>\n",
+			"h4",
+			"h1",
+			"url('opensans-",
+			"font-family: 'open_",
+			"font-family: 'open_sanslight",
+			"url('",
+			"OpenSans-Italic-webfont.eot",
+			"../assets/OpenSans-Italic-webfont.eot",
+			".option-no-labels",
+			"no-label",
+			"option-user-icon",
+			"user-icon",
+			".option-badge",
+			"option-badge",
+			"user-icon",
+			"h2",
+			"message-bar",
+			"Free & DfB ",
+			".dropbox-upgrade",
+			"14px",
+			".icon",
+			"Open Folder",
+			"Eliminated",
+			"message bar",
+			"brand",
+			"message bar",
+			"pointer",
+			"images/",
+			"14px",
+			"20px",
+			"#dropbo",
+			"#emp",
+			"#foot",
+			"#recent",
+			"#feed",
+			"#sett",
+			"#cont",
+			"#status",
+			"id=\"",
+			"h2",
+			"h1",
+			"images/dropbox-website",
+			"images/dropbox-folder",
+			"src=\"images/",
+			"url(\"images/",
+			"css/",
+			"Upgrade to Pro",
+			".option-icon",
+			"message bar",
+			"option-top-right",
+			"top-right",
+			"header-with-message-bar",
+			"message-bar",
+			"message bar",
+			"recent",
+			"Free & Business Accounts",
+			"top right",
+			"Open work folder",
+			"Open personal folder",
+			"<a href title=\"Open folder\">",
+			"<a href title=\"Launch website\">",
+			"top right",
+			"message bar",
+			"id",
+			"Upgrade to pro",
+			"14px",
+			"Message bar",
+			"dropbox-personal",
+			"dropbox-business",
+			"dropbox-folder",
+			"dropbox-website\"",
+			"selector",
+			"feed-selector",
+			"selector",
+			"upgrade",
+			"-selected",
+			"-selected.png",
+			"selector",
+			"verything",
+			"span",
+			"16px",
+			"18px",
+			".header "
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 110.0
+	},
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": false,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"index",
+				"html/flywheel/index.htm"
+			],
+			[
+				"kpi",
+				"less/flywheel/kpi.less"
+			],
+			[
+				"flywh",
+				"less/flywheel/flywheel.less"
+			],
+			[
+				"keyfr",
+				"less/flywheel/keyframes.less"
+			],
+			[
+				"font",
+				"less/flywheel/font.less"
+			],
+			[
+				"fly",
+				"less/flywheel/flywheel.less"
+			],
+			[
+				"appctr",
+				"js/flywheel/controllers/appCtrl.js"
+			],
+			[
+				"spark",
+				"js/flywheel/directives/sparkline.js"
+			],
+			[
+				"mac",
+				"css/mac-tray.css"
+			],
+			[
+				"wind",
+				"css/windows-upgrade.css"
+			],
+			[
+				"mac-up",
+				"css/mac-upgrade.css"
+			],
+			[
+				"win",
+				"css/windows-upgrade.css"
+			],
+			[
+				"windo",
+				"css/windows.css"
+			],
+			[
+				"gene",
+				"css/general.css"
+			],
+			[
+				"reti",
+				"css/retina.css"
+			],
+			[
+				"mac-t",
+				"css/mac-tray.css"
+			],
+			[
+				"tray",
+				"css/mac-tray.css"
+			],
+			[
+				"nol",
+				"html/no-labels.html"
+			],
+			[
+				"upgr",
+				"css/mac-upgrade.css"
+			],
+			[
+				"inde",
+				"html/index.html"
+			],
+			[
+				"upgra",
+				"css/mac-upgrade.css"
+			],
+			[
+				"tra",
+				"css/mac-tray.css"
+			],
+			[
+				"ge",
+				"css/general.css"
+			],
+			[
+				"reset",
+				"css/reset.css"
+			],
+			[
+				"try",
+				"css/tray.css"
+			],
+			[
+				"over-quo",
+				"mac/over-quota-folder-invite.html"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 196.0,
+	"status_bar_visible": true
+}

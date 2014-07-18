@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Chinese Checkers</title>
+	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,900' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+	<div id="boardWrapper">
+		<div id="board"></div>
+	</div>
+	
+	<div class="desc">
+		<h1>Chinese Checkers</h1>
+		<div id="score"></div>
+		<div id="message"></div>
+	</div>
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script>
+var Board = {
+	WIDTH: 13,
+	HEIGHT: 17,
+	COLOR:  {
+		"UNDEFINED": 0,
+		"RED": 1,
+		"GREEN": 2,
+	},
+	HOME_HEIGHT: 4,
+	CELL_DIMENSION: 20,
+	CELL_WIDTH_GUTTER: 10,
+	CELL_HEIGHT_GUTTER: 5,
+	
+	SEARCH_DEPTH: 3,
+	INT_MAX: 9999999999999,
+	INT_MIN: -9999999999999,
+	
+
+	rowWidths: [1,2,3,4,13,12,11,10,9,10,11,12,13,4,3,2,1],
+	offsets: [6,5,5,4,0,0,1,1,2,1,1,0,0,4,5,5,6],
+	absGrid: [],
+	pieces: [],
+	state: {
+		pov: 0,
+		selected: false,
+		scores: [0,0],
+	},
+
+	//set grid to an empty board
+	createGrids: function() {
+		//current player
+		this.pov = this.COLOR.RED;
+
+		//all grids
+		this.absGrid = [];
+		for (var y = 0; y < this.HEIGHT; y++) {
+			for (var x = 0; x < this.WIDTH; x++) {
+				this.absGrid.push({
+					"x": x, 
+					"y": y, 
+					"isValid": this.isValidAbsCoords(x, y),
+					"isNeighbor": false
+				});
+			}
+		}
+	},
+
+	//expects absolute coordinates
+	isValidAbsCoords: function(x, y) {
+		if (y < 0 || y >= this.HEIGHT)
+			return false;
+
+		x -= this.offsets[y];
+		if (x < 0 || x >= this.rowWidths[y])
+			return false;
+
+		return true;
+	},
+
+	//expects relate coordinates for the color
+	getAbsCoords: function(p) {
+		var newP = Board.clonePiece(p);
+		newP.x += this.offsets[newP.y];
+
+		if (newP.color === Board.COLOR.GREEN) {
+			newP.y = this.HEIGHT - newP.y - 1;
+			newP.x = this.WIDTH - newP.x - 1;
+			if (newP.y % 2)
+				newP.x = newP.x - 1;
+		}
+
+		return newP;		
+	},
+
+	clonePiece: function(p) {
+		return {
+			"x": p.x,
+			"y": p.y,
+			"color": p.color,
+			"index": p.index,
+			"selected": p.selected
+		};	
+	},
+
+	getRelativeCoords: function(p) {
+		var newP = Board.clonePiece(p);
+		if (newP.color === Board.COLOR.GREEN) {
+			newP.y = this.HEIGHT - newP.y - 1;
+			newP.x = this.WIDTH - newP.x - 1;
+			if (newP.y % 2)
+				newP.x = newP.x - 1;
+		}
+
+		newP.x -= this.offsets[newP.y];
+
+		return newP;
+	},
+
+	initPieces: function(pieces, color) {
+		for (var y = this.HEIGHT - this.HOME_HEIGHT; y < this.HEIGHT; y++) {
+			for (var x = 0; x < this.rowWidths[y]; x++) {
+				pieces.push({
+					"x": x, 
+					"y": y, 
+					"color": color, 
+					"selected": false,
+					"index": pieces.length});
+			}
+		}
+	},
+
+	//convert tuples into point objects
+	getPoint: function(x, y, color) {
+		color = color ? color : 0;
+		return {"x": x, "y": y, "color": color};
+	},
+
+	getNeighbor : function(x, y, direction) {
+		return {"x": x, "y": y, "direction": direction};
+	},
+
+	//returns all valid neighbors of the selected point
+	getNeighbors: function(x, y) {
+		if (y % 2) {
+			var neighbors = [this.getNeighbor(x, y + 1, 0),
+				this.getNeighbor(x + 1, y + 1, 1),
+				this.getNeighbor(x - 1, y, 2),
+				this.getNeighbor(x + 1, y, 3),
+				this.getNeighbor(x, y - 1, 4),
+				this.getNeighbor(x + 1, y - 1, 5)];
+		}
+		else {
+			var neighbors = [this.getNeighbor(x - 1, y + 1, 0),
+				this.getNeighbor(x, y + 1, 1),
+				this.getNeighbor(x - 1, y, 2),
+				this.getNeighbor(x + 1, y, 3),
+				this.getNeighbor(x - 1, y - 1, 4),
+				this.getNeighbor(x, y - 1, 5)];
+		}
+		neighbors = neighbors.filter(function(p) {
+			return Board.isValidAbsCoords(p.x, p.y);
+		});
+		return neighbors;
+	},
+
+	setNeighbors: function(neighbors) {
+		this.absGrid = this.absGrid.map(function(d) {
+			var match = neighbors.filter(function(n) {
+				return n.x === d.x && n.y === d.y;
+			});
+
+			if (match.length) {
+				d.isNeighbor = true;
+			}
+			else {
+				d.isNeighbor = false;
+			}
+
+			return d;
+		});
+	},
+
+	calculateScore: function(pov) {
+		Board.state.scores = [0,0];
+		Board.pieces.forEach(function(p) {
+			Board.state.scores[p.color - 1] -= p.y - Board.HOME_HEIGHT + 1;
+		});
+	},
+
+	drawScore: function() {
+		var labels = d3.select("#score")
+			.selectAll("div")
+			.data(Board.state.scores);
+
+		labels.text(function(d, i) {
+			if (i % 2) {
+				return "GREEN: " + d;
+			}
+			else {
+				return "RED: " + d;
+			}
+		});
+
+		labels.enter()
+			.append("div")
+			.text(function(d, i) {
+				if (i % 2) {
+					return "RED: " + d;
+				}
+				else {
+					return "GREEN: " + d;
+				}
+			});
+	},
+
+	drawWinning: function() {
+		if (Board.state.scores[0]<=10) {
+			d3.selectAll("#message").text("Red is winning!");
+		}
+		if (Board.state.scores[1]<=10) {
+			d3.selectAll("#message").text("Green is winning");
+		}
+	},
+
+	//returns the point in the same direction as the given neighbor
+	getNextNeighbor: function(neighbor) {
+		//neighbor = {"x", "y", "direction"}
+		var next = this.getNeighbors(neighbor.x, neighbor.y);
+		var next = next.filter(function(n) {
+			return n.direction === neighbor.direction;
+		});
+
+		if (next.length && this.isValidAbsCoords(next))
+			return next[0];
+		return false;
+	},
+
+	compareCoords: function(d) {
+		return [d.x, d.y];
+	},
+
+	compareIndexes: function(d) {
+		return d.index;
+	},
+
+	isTaken: function(x, y) {
+		// debugger
+		var absPieces = this.pieces.map(function(d) {
+			return Board.getAbsCoords(d);
+		});
+
+		return absPieces.filter(function(d) {
+			return d.x === x && d.y === y;
+		});
+	},
+
+	//expects relative coordinates
+	drawPieces: function(pieces) {
+		var tempP;
+		pieces = pieces.map(function(p) {
+			tempP = Board.getAbsCoords(p);
+			tempP.index = p.index;
+			return tempP;
+		});
+
+		var top = d3.selectAll(".top");
+		if (!top[0].length) {
+			top = d3.select("#board")
+				.append("div")
+				.attr("class", "top");
+		}
+
+		var piecesSelection = top.selectAll("div").data(pieces, Board.compareIndexes);
+
+		piecesSelection
+			.transition()
+			.duration(750)
+			.style({
+				"left": function(d) {
+					var offset = 0;
+					var offset = d.y % 2 ? 0 : (Board.CELL_DIMENSION + Board.CELL_WIDTH_GUTTER)/2 * -1;
+					return d.x * (Board.CELL_DIMENSION + Board.CELL_WIDTH_GUTTER) + offset + "px" },
+				"top": function(d) {
+					return d.y * (Board.CELL_DIMENSION + Board.CELL_HEIGHT_GUTTER) + "px"; }
+				}
+			);
+
+		piecesSelection.enter()
+			.append("div")
+			.attr("class", function(d) {
+				if (d.color === Board.COLOR.RED)
+					return "red";
+				if (d.color === Board.COLOR.GREEN)
+					return "green";
+			})
+			.style({
+				"left": function(d) {
+					var offset = 0;
+					var offset = d.y % 2 ? 0 : (Board.CELL_DIMENSION + Board.CELL_WIDTH_GUTTER)/2 * -1;
+					return d.x * (Board.CELL_DIMENSION + Board.CELL_WIDTH_GUTTER) + offset + "px" },
+				"top": function(d) {
+					return d.y * (Board.CELL_DIMENSION + Board.CELL_HEIGHT_GUTTER) + "px"; }
+				}
+			)
+			.on("click", function() {
+				Board.clickedPiece(this);
+			});
+
+		piecesSelection.exit().remove();
+
+	},
+
+	drawBoard: function() {
+		var base = d3.select("#board")
+			.append("div")
+			.attr("class", "base");
+
+		base.selectAll("div")
+			.data(this.absGrid)
+			.enter()
+			.append("div")
+			.classed("valid", function(d) {
+				return d.isValid;
+			})
+			.classed("neighbor", function(d) {
+				return d.isNeighbor;
+			})
+			.style({
+				"left": function(d) {
+					var offset = 0;
+					var offset = d.y % 2 ? 0 : (Board.CELL_DIMENSION + Board.CELL_WIDTH_GUTTER)/2 * -1;
+					return d.x * (Board.CELL_DIMENSION + Board.CELL_WIDTH_GUTTER) + offset + "px" },
+				"top": function(d) {
+					return d.y * (Board.CELL_DIMENSION + Board.CELL_HEIGHT_GUTTER) + "px"; }
+				}
+			)
+			.on("click", function() {
+				Board.clicked(this);
+			});
+	},
+
+	getAllValidPositions: function(x, y, blacklist, isStart) {
+		var neighbors = Board.getNeighbors(x, y);
+		var validPs = [];
+		var recurPs = [];
+		var newBlacklist = [];
+		var nextP;
+
+		neighbors.forEach(function(p) {
+			//see if jumping is possible
+			if (Board.isTaken(p.x, p.y).length) {
+				nextP = Board.getNextNeighbor(p);
+				var isJumpable = !!nextP && !Board.isTaken(nextP.x, nextP.y).length;
+				var isBlacklisted = !!nextP && !!blacklist &&blacklist.some(function(p) {
+					return p.x===nextP.x && p.y===nextP.y;
+				});
+				//if jumpable and not in blacklist, keep looking
+				if (isJumpable && !isBlacklisted) {
+					validPs.push(nextP);
+					newBlacklist = validPs.concat(blacklist);
+					recurPs = Board.getAllValidPositions(nextP.x, nextP.y, newBlacklist, false);
+					validPs = validPs.concat(recurPs);
+				}
+			}
+			//add available neighbor
+			else if (isStart) {
+				validPs.push(p);
+			}
+		});
+		return validPs;
+	},
+
+	getValidPositions: function(x, y) {
+		var neighbors = Board.getNeighbors(x, y);
+		var validPositions = [];
+		var curP;
+
+		neighbors.forEach(function(n) {
+			if (Board.isTaken(n.x, n.y).length) {
+				curP = Board.getNextNeighbor(n);
+				if (!!curP && !Board.isTaken(curP.x, curP.y).length) {
+					validPositions.push(curP);
+				}
+			} 
+			else {
+				validPositions.push(n);
+			}
+		});
+		return validPositions;
+	},
+
+	clicked: function(el) {
+		if (!Board.state.selected) return;
+
+		var d = d3.select(el).datum();
+		var selected = Board.state.selected;
+		var validPs = Board.getAllValidPositions(selected.x, selected.y, [], true);
+		var isValid = validPs.some(function(p) {
+			return p.x === d.x && p.y === d.y;
+		});
+
+		if (isValid) {
+			console.log("This click is valid!");
+			var cloneD = Board.clonePiece(d);
+			cloneD.color = selected.color;
+			var relativeD = Board.getRelativeCoords(cloneD);
+			this.pieces[selected.index].x = relativeD.x;
+			this.pieces[selected.index].y = relativeD.y;
+
+			Board.drawPieces(Board.pieces);
+			Board.calculateScore();
+			Board.drawScore();
+			
+			Board.computerMove();
+				
+		}
+		else {
+			console.log("yo, wrong move");
+		}
+	},
+
+	computerMove : function(){
+		Board.pieces = Board.chooseMove({board: Board.pieces}).board;
+		Board.drawPieces(Board.pieces);
+		Board.calculateScore();
+		Board.drawScore();
+	},
+	
+	evaluate: function(state){
+		var scores = [1,1];
+		state.board.forEach(function(p) {
+			scores[p.color - 1] = scores[p.color - 1] * (p.y - Board.HOME_HEIGHT + 1);
+		});
+		//console.log("Human:"+scores[0] + " Computer:"+scores[1]+" Diff:"+(scores[0]-scores[1]));
+		return scores[0] - scores[1];
+	},
+	
+	childrenStates: function(state) {
+		var nextStates = [];
+		var nextTurn = state.turn == 0 ? 1 : 0;
+		
+		Board.pieces.forEach(function(val, idx){
+			if(val.color == Board.COLOR.GREEN){
+				var absVal = Board.getAbsCoords(val);
+				var moves = Board.getAllValidPositions(absVal.x, absVal.y, [], true);
+				
+				
+				moves.forEach(function(move){
+					if(move != undefined){				
+						var boardClone = Board.pieces.map(function(p) {
+							return Board.clonePiece(p);
+						})	
+						
+						move.color = Board.COLOR.GREEN;
+						move = Board.getRelativeCoords(move);
+						boardClone[idx].x=move.x;	
+						boardClone[idx].y=move.y;
+						nextStates.push({ turn: nextTurn, board: boardClone});						
+					}
+				});				
+			}
+		});
+		
+		return nextStates;
+	},
+	
+	// Same as isMax clause of minimax, but keeps track of and returns the actual move.	
+	chooseMove: function(state){
+
+		var move_idx = null;
+		var v = Board.INT_MIN;
+		var nextMoves = Board.childrenStates({ turn: 0, board: Board.pieces});
+		for (var i=0;i<nextMoves.length;i++){
+			var move = nextMoves[i];
+			var v_1 = Board.minimax(move, Board.SEARCH_DEPTH, Board.INT_MIN, Board.INT_MAX);
+
+			if(v_1 > v)	{
+				v = v_1;				
+				move_idx = i;
+			}				
+			
+		}
+		return nextMoves[move_idx]; 
+
+	},	
+
+	isEnd : function(state){
+		var scores = [0,0];
+		state.board.forEach(function(p) {
+			scores[p.color - 1] -= p.y - Board.HOME_HEIGHT + 1;
+		});
+		return scores.some(function(v) {
+			return v >= 10;
+		})
+	},
+	
+	minimax: function (state, depth, min, max){
+		if(Board.isEnd(state)  || depth == 0)
+			return Board.evaluate(state);		
+		
+		if(state.turn == 0){ // Our turn - we want a max
+			var v = min;
+			var nextMoves = Board.childrenStates(state);
+			for (var i=0;i<nextMoves.length;i++){
+				var move = nextMoves[i];
+				var v_1 = Board.minimax(move, depth-1, v, max);
+				if(v_1 > v)	v = v_1;				
+				if(v > max) {
+					console.log("pruned");
+					return max;
+				}
+			}
+			return v;
+		}
+
+		if(state.turn == 1){ // Humans turn - we want a min
+			var v = max;
+			var nextMoves = Board.childrenStates(state);
+			for (var i=0;i<nextMoves.length;i++){
+				var move = nextMoves[i];
+				var v_1 = Board.minimax(move, depth-1, min, v);
+				if(v_1 < v)	v = v_1;				
+				if(v < min) {
+					console.log("pruned");
+					return min;
+				}
+			}
+			return v;
+		
+		}	
+	},
+
+	
+	setSelected: function(x, y) {
+		this.pieces = this.pieces.map(function(p) {
+			if (p.x === x && p.y === y) {
+				p.selected = true;
+			}
+			else {
+				p.selected = false;
+			}
+			return p;
+		});
+	},
+
+	clickedPiece: function(el) {
+		d3.selectAll(".selected").classed("selected", false);
+		d3.select(el).classed("selected", true);
+		var d = d3.select(el).datum();
+		d.selected = true;
+
+		this.state.pov = d.color;
+		var validPs = Board.getAllValidPositions(d.x, d.y, [], true);
+		Board.setNeighbors(validPs);		
+
+		Board.setSelected(el);
+		Board.drawBoard();
+		this.state.selected = d;	
+	},
+
+	init: function() {
+		this.createGrids();
+		this.drawBoard();
+
+		this.initPieces(this.pieces, Board.COLOR.RED);
+		this.initPieces(this.pieces, Board.COLOR.GREEN);
+		this.drawPieces(this.pieces);
+		this.calculateScore();
+		this.drawScore();
+	}
+}
+
+Board.init();
+
+</script>
+</body>
+</html>
