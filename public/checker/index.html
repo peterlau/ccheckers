@@ -9,14 +9,27 @@
 
 <body>
 
+	<div class="desc">
+		<div class="content">
+			<div class="contentInnerWrapper">
+				<h1>Chinese Checkers</h1>
+				<p>Move all red circles to the opposite end!</p>
+				<div id="rules">
+					<div>Select a red circle</div>			
+					<div>Click on a valid position</div>
+				</div>
+				<div id="score">
+					<div class="red circle">-110</div>
+					<div class="green circle">-110</div>
+					<div class="clear"></div>
+				</div>
+				<div id="message"></div>
+			</div>
+		</div>
+	</div>
+
 	<div id="boardWrapper">
 		<div id="board"></div>
-	</div>
-	
-	<div class="desc">
-		<h1>Chinese Checkers</h1>
-		<div id="score"></div>
-		<div id="message"></div>
 	</div>
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -26,8 +39,8 @@ var Board = {
 	HEIGHT: 17,
 	COLOR:  {
 		"UNDEFINED": 0,
-		"RED": 1,
 		"GREEN": 2,
+		"RED": 1,
 	},
 	HOME_HEIGHT: 4,
 	CELL_DIMENSION: 20,
@@ -196,24 +209,8 @@ var Board = {
 			.data(Board.state.scores);
 
 		labels.text(function(d, i) {
-			if (i % 2) {
-				return "GREEN: " + d;
-			}
-			else {
-				return "RED: " + d;
-			}
+			return 110 + d;
 		});
-
-		labels.enter()
-			.append("div")
-			.text(function(d, i) {
-				if (i % 2) {
-					return "RED: " + d;
-				}
-				else {
-					return "GREEN: " + d;
-				}
-			});
 	},
 
 	drawWinning: function() {

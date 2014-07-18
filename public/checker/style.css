@@ -2,39 +2,88 @@ body {
 	margin: 0;
 	padding: 0;
 	background: #fff;
+	height: 100%;
 	color: #333;
 	font-family: 'Source Sans Pro', sans-serif;
+	overflow: hidden;
 }
 
 h1 {
-	margin-top: 40px;
+	margin-top: 0;
+	padding-top: 80px;
 	font-weight: 999;
 	text-transform: uppercase;
 	font-size: 48px;
 	text-align: right;
 }
 
+.clear {
+	clear: both;
+}
+
 .desc {
-	position: absolute;
-	height: 100%;
-	width: 300px;
-	margin-right: 500px;
-	padding-right: 50px;
-	padding-left: 100px;
+	position: relative;
+	float: left;
+	width: 50%;
+}
+
+.desc .content {
+	margin-right: 80px;
+	padding: 0 40px;
 	background: #f7f7f7;
+	padding-bottom: 99999px;
+}
+
+.desc .content .contentInnerWrapper {
+	float: right;
+	width: 400px;
+}
+
+#score > div.circle {
+	float: right;
+	width: 50px;
+	height: 50px;
+	background: red;
+	border-radius: 50px;
+	color: white;
+	font-weight: bold;
+	text-align: center;
+	margin-left: 10px;
+	line-height: 50px;
+}
+#score > div.circle.green {
+	background: rgb(112, 168, 112);
+}
+#score > div.circle.red {
+	background: rgb(209, 56, 56);
+}
+
+.desc h1 + p {
+	text-align: right;
+	margin: 0;
+	margin-bottom: 10px;
+	margin-top: -20px;
+}
+
+#rules {
+	text-align: right;
+	padding-left: 80px;
+	margin-bottom: 40px;
+}
+
+#rules > div {
+	margin-bottom: 5px;
+	color: #999;
 }
 
 #boardWrapper {
 	position: relative;
 	float: right;
-	padding-left: 40px;
-	width: 450px;
-	height: 450px;
-	margin: 0 auto;
-	margin-top: 40px;
+	width: 50%;
 }
 
 #board {
+	margin-top: 80px;
 	position: relative;
 }
 
@@ -91,8 +140,4 @@ h1 {
 }
 .top > .green.selected {
 	background: green;
-}
-
-#score > div {
-	text-align: right;
 }
