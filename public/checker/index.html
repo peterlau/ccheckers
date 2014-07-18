@@ -34,7 +34,7 @@ var Board = {
 	CELL_WIDTH_GUTTER: 10,
 	CELL_HEIGHT_GUTTER: 5,
 	
-	SEARCH_DEPTH: 2,
+	SEARCH_DEPTH: 0,
 	INT_MAX: 9999999999999,
 	INT_MIN: -9999999999999,
 	
@@ -434,7 +434,7 @@ var Board = {
 		state.board.forEach(function(p) {
 			scores[p.color - 1] = scores[p.color - 1] * (p.y - Board.HOME_HEIGHT + 1);
 		});
-		//console.log("Human:"+scores[0] + " Computer:"+scores[1]+" Diff:"+(scores[0]-scores[1]));
+		console.log("Human:"+scores[0] + " Computer:"+scores[1]+" Diff:"+(scores[0]-scores[1]));
 		return scores[0] - scores[1];
 	},
 	
