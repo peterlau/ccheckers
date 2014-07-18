@@ -34,7 +34,7 @@ var Board = {
 	CELL_WIDTH_GUTTER: 10,
 	CELL_HEIGHT_GUTTER: 5,
 	
-	SEARCH_DEPTH: 3,
+	SEARCH_DEPTH: 2,
 	INT_MAX: 9999999999999,
 	INT_MIN: -9999999999999,
 	
@@ -458,7 +458,7 @@ var Board = {
 						move = Board.getRelativeCoords(move);
 						boardClone[idx].x=move.x;	
 						boardClone[idx].y=move.y;
-						nextStates.push({ turn: nextTurn, board: boardClone});						
+						nextStates.push({ turn: nextTurn, board: boardClone, move: move, movedIdx: idx});						
 					}
 				});				
 			}
@@ -476,7 +476,8 @@ var Board = {
 		for (var i=0;i<nextMoves.length;i++){
 			var move = nextMoves[i];
 			var v_1 = Board.minimax(move, Board.SEARCH_DEPTH, Board.INT_MIN, Board.INT_MAX);
-
+		
+			console.log("idx:"+move.movedIdx+" x:"+move.move.x+" y:"+move.move.y+" heur:"+v_1);
 			if(v_1 > v)	{
 				v = v_1;				
 				move_idx = i;
