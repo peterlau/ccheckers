@@ -15,7 +15,7 @@
 				<h1>Chinese Checkers</h1>
 				<p>Move all red circles to the opposite end!</p>
 				<div id="rules">
-					<div>Select a red circle</div>			
+					<div>Select a red circle</div>
 					<div>Click on a valid position</div>
 				</div>
 				<div id="score">
@@ -46,11 +46,11 @@ var Board = {
 	CELL_DIMENSION: 20,
 	CELL_WIDTH_GUTTER: 10,
 	CELL_HEIGHT_GUTTER: 5,
-	
-	SEARCH_DEPTH: 0,
+
+	SEARCH_DEPTH: 2,
 	INT_MAX: 9999999999999,
 	INT_MIN: -9999999999999,
-	
+
 
 	rowWidths: [1,2,3,4,13,12,11,10,9,10,11,12,13,4,3,2,1],
 	offsets: [6,5,5,4,0,0,1,1,2,1,1,0,0,4,5,5,6],
@@ -72,8 +72,8 @@ var Board = {
 		for (var y = 0; y < this.HEIGHT; y++) {
 			for (var x = 0; x < this.WIDTH; x++) {
 				this.absGrid.push({
-					"x": x, 
-					"y": y, 
+					"x": x,
+					"y": y,
 					"isValid": this.isValidAbsCoords(x, y),
 					"isNeighbor": false
 				});
@@ -105,7 +105,7 @@ var Board = {
 				newP.x = newP.x - 1;
 		}
 
-		return newP;		
+		return newP;
 	},
 
 	clonePiece: function(p) {
@@ -115,7 +115,7 @@ var Board = {
 			"color": p.color,
 			"index": p.index,
 			"selected": p.selected
-		};	
+		};
 	},
 
 	getRelativeCoords: function(p) {
@@ -136,9 +136,9 @@ var Board = {
 		for (var y = this.HEIGHT - this.HOME_HEIGHT; y < this.HEIGHT; y++) {
 			for (var x = 0; x < this.rowWidths[y]; x++) {
 				pieces.push({
-					"x": x, 
-					"y": y, 
-					"color": color, 
+					"x": x,
+					"y": y,
+					"color": color,
 					"selected": false,
 					"index": pieces.length});
 			}
@@ -381,7 +381,7 @@ var Board = {
 				if (!!curP && !Board.isTaken(curP.x, curP.y).length) {
 					validPositions.push(curP);
 				}
-			} 
+			}
 			else {
 				validPositions.push(n);
 			}
@@ -400,7 +400,7 @@ var Board = {
 		});
 
 		if (isValid) {
-			console.log("This click is valid!");
+			// console.log("This click is valid!");
 			var cloneD = Board.clonePiece(d);
 			cloneD.color = selected.color;
 			var relativeD = Board.getRelativeCoords(cloneD);
@@ -410,13 +410,13 @@ var Board = {
 			Board.drawPieces(Board.pieces);
 			Board.calculateScore();
 			Board.drawScore();
-			
+
 			Board.computerMove();
-				
+
 		}
-		else {
-			console.log("yo, wrong move");
-		}
+		// else {
+			// console.log("yo, wrong move");
+		// }
 	},
 
 	computerMove : function(){
@@ -425,46 +425,62 @@ var Board = {
 		Board.calculateScore();
 		Board.drawScore();
 	},
-	
+
 	evaluate: function(state){
-		var scores = [1,1];
+		var scores = [0,0];
 		state.board.forEach(function(p) {
-			scores[p.color - 1] = scores[p.color - 1] * (p.y - Board.HOME_HEIGHT + 1);
+			scores[p.color - 1] -= p.y;
 		});
-		console.log("Human:"+scores[0] + " Computer:"+scores[1]+" Diff:"+(scores[0]-scores[1]));
-		return scores[0] - scores[1];
+		return scores[1] - scores[0];
 	},
-	
+
 	childrenStates: function(state) {
 		var nextStates = [];
 		var nextTurn = state.turn == 0 ? 1 : 0;
-		
-		Board.pieces.forEach(function(val, idx){
-			if(val.color == Board.COLOR.GREEN){
+		// console.log("CURRENT TURN: " + state.turn);
+
+		state.board.forEach(function(val, idx){
+			var curColor = Board.COLOR.GREEN;
+			if (state.turn === 1) {
+				// debugger
+				curColor = Board.COLOR.RED;
+			}
+			if(val.color === curColor){
 				var absVal = Board.getAbsCoords(val);
 				var moves = Board.getAllValidPositions(absVal.x, absVal.y, [], true);
-				
-				
-				moves.forEach(function(move){
-					if(move != undefined){				
-						var boardClone = Board.pieces.map(function(p) {
+				// console.log("MOVES: " + moves.length);
+
+
+				moves.forEach(function(move, moveID){
+					if(move != undefined){
+						var boardClone = state.board.map(function(p) {
 							return Board.clonePiece(p);
-						})	
-						
-						move.color = Board.COLOR.GREEN;
+						})
+
+						if (!state.turn) {
+							move.color = Board.COLOR.GREEN;
+						}
+						else {
+							move.color = Board.COLOR.RED;
+						}
+
 						move = Board.getRelativeCoords(move);
-						boardClone[idx].x=move.x;	
+
+						// console.log("MoveID: " + nextStates.length + ", from (" + boardClone[idx].x + ", " + boardClone[idx].y + ") to (" + move.x + ", " + move.y + ")");
+
+						boardClone[idx].x=move.x;
 						boardClone[idx].y=move.y;
-						nextStates.push({ turn: nextTurn, board: boardClone, move: move, movedIdx: idx});						
+
+						nextStates.push({ turn: nextTurn, board: boardClone, move: move, movedIdx: idx});
 					}
-				});				
+				});
 			}
 		});
-		
+
 		return nextStates;
 	},
-	
-	// Same as isMax clause of minimax, but keeps track of and returns the actual move.	
+
+	// Same as isMax clause of minimax, but keeps track of and returns the actual move.
 	chooseMove: function(state){
 
 		var move_idx = null;
@@ -473,17 +489,17 @@ var Board = {
 		for (var i=0;i<nextMoves.length;i++){
 			var move = nextMoves[i];
 			var v_1 = Board.minimax(move, Board.SEARCH_DEPTH, Board.INT_MIN, Board.INT_MAX);
-		
-			console.log("idx:"+move.movedIdx+" x:"+move.move.x+" y:"+move.move.y+" heur:"+v_1);
+			// console.log("MoveID: " + i + ", Value: " + v_1);
+			// console.log("idx:"+move.movedIdx+" x:"+move.move.x+" y:"+move.move.y+" heur:"+v_1);
 			if(v_1 > v)	{
-				v = v_1;				
+				v = v_1;
 				move_idx = i;
-			}				
-			
-		}
-		return nextMoves[move_idx]; 
+			}
 
-	},	
+		}
+		return nextMoves[move_idx];
+
+	},
 
 	isEnd : function(state){
 		var scores = [0,0];
@@ -494,20 +510,20 @@ var Board = {
 			return v >= 10;
 		})
 	},
-	
+
 	minimax: function (state, depth, min, max){
 		if(Board.isEnd(state)  || depth == 0)
-			return Board.evaluate(state);		
-		
+			return Board.evaluate(state);
+
 		if(state.turn == 0){ // Our turn - we want a max
 			var v = min;
 			var nextMoves = Board.childrenStates(state);
 			for (var i=0;i<nextMoves.length;i++){
 				var move = nextMoves[i];
 				var v_1 = Board.minimax(move, depth-1, v, max);
-				if(v_1 > v)	v = v_1;				
+				if(v_1 > v)	v = v_1;
 				if(v > max) {
-					console.log("pruned");
+					// console.log("pruned");
 					return max;
 				}
 			}
@@ -520,18 +536,19 @@ var Board = {
 			for (var i=0;i<nextMoves.length;i++){
 				var move = nextMoves[i];
 				var v_1 = Board.minimax(move, depth-1, min, v);
-				if(v_1 < v)	v = v_1;				
+				if(v_1 < v)	v = v_1;
 				if(v < min) {
-					console.log("pruned");
+					// console.log("pruned");
 					return min;
 				}
 			}
+			// console.log("MIN by RED: " + v);
 			return v;
-		
-		}	
+
+		}
 	},
 
-	
+
 	setSelected: function(x, y) {
 		this.pieces = this.pieces.map(function(p) {
 			if (p.x === x && p.y === y) {
@@ -552,11 +569,11 @@ var Board = {
 
 		this.state.pov = d.color;
 		var validPs = Board.getAllValidPositions(d.x, d.y, [], true);
-		Board.setNeighbors(validPs);		
+		Board.setNeighbors(validPs);
 
 		Board.setSelected(el);
 		Board.drawBoard();
-		this.state.selected = d;	
+		this.state.selected = d;
 	},
 
 	init: function() {
